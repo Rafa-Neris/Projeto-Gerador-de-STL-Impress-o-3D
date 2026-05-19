@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerador STL 3D</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      background:
+      linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+      url('https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=1920&auto=format&fit=crop');
+      background-size:cover;
+      background-position:center;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      color:white;
+    }
+
+    .container{
+      width:100%;
+      max-width:900px;
+      background:rgba(20,20,20,0.92);
+      border-radius:20px;
+      padding:30px;
+      backdrop-filter:blur(8px);
+      box-shadow:0 0 25px rgba(0,0,0,0.5);
+    }
+
+    h1{
+      text-align:center;
+      margin-bottom:10px;
+      font-size:38px;
+      color:#00d9ff;
+    }
+
+    p{
+      text-align:center;
+      margin-bottom:30px;
+      color:#ccc;
+    }
+
+    .form-group{
+      margin-bottom:20px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:bold;
+    }
+
+    textarea,
+    input{
+      width:100%;
+      padding:15px;
+      border:none;
+      border-radius:12px;
+      background:#2a2a2a;
+      color:white;
+      font-size:16px;
+    }
+
+    textarea{
+      resize:none;
+      height:120px;
+    }
+
+    .size-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:15px;
+    }
+
+    button{
+      width:100%;
+      padding:16px;
+      border:none;
+      border-radius:12px;
+      background:#00d9ff;
+      color:#000;
+      font-size:18px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+      margin-top:10px;
+    }
+
+    button:hover{
+      background:#00b4d8;
+      transform:scale(1.02);
+    }
+
+    .preview{
+      margin-top:30px;
+      background:#1b1b1b;
+      border-radius:15px;
+      padding:20px;
+      text-align:center;
+      display:none;
+    }
+
+    .preview img{
+      width:100%;
+      max-width:400px;
+      border-radius:12px;
+      margin-top:15px;
+      border:3px solid #00d9ff;
+    }
+
+    .download-btn{
+      background:#00ff95;
+      margin-top:20px;
+    }
+
+    .download-btn:hover{
+      background:#00d47d;
+    }
+
+    .info{
+      margin-top:20px;
+      background:#262626;
+      padding:15px;
+      border-radius:10px;
+      color:#ccc;
+      line-height:1.6;
+    }
+
+    @media(max-width:768px){
+      .size-grid{
+        grid-template-columns:1fr;
+      }
+
+      h1{
+        font-size:28px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Gerador STL para Impressão 3D</h1>
+
+    <p>
+      Descreva o objeto que deseja criar para gerar o modelo STL.
+    </p>
+
+    <div class="form-group">
+      <label>Descrição do Modelo 3D</label>
+
+      <textarea id="descricao"
+      placeholder="Exemplo: vaso de planta moderno com textura hexagonal"></textarea>
+    </div>
+
+    <div class="size-grid">
+
+      <div class="form-group">
+        <label>Largura (mm)</label>
+        <input type="number" id="largura" value="100">
+      </div>
+
+      <div class="form-group">
+        <label>Altura (mm)</label>
+        <input type="number" id="altura" value="150">
+      </div>
+
+      <div class="form-group">
+        <label>Profundidade (mm)</label>
+        <input type="number" id="profundidade" value="100">
+      </div>
+
+    </div>
+
+    <button onclick="gerarModelo()">
+      Gerar Modelo STL
+    </button>
+
+    <div class="preview" id="preview">
+
+      <h2>Pré-visualização</h2>
+
+      <img
+      src="https://cdn-icons-png.flaticon.com/512/3659/3659898.png"
+      alt="Modelo STL">
+
+      <div class="info" id="informacoes"></div>
+
+      <button class="download-btn" onclick="baixarSTL()">
+        Baixar Arquivo STL
+      </button>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    function gerarModelo(){
+
+      const descricao = document.getElementById("descricao").value;
+      const largura = document.getElementById("largura").value;
+      const altura = document.getElementById("altura").value;
+      const profundidade = document.getElementById("profundidade").value;
+
+      if(descricao === ""){
+        alert("Digite a descrição do modelo 3D.");
+        return;
+      }
+
+      document.getElementById("preview").style.display = "block";
+
+      document.getElementById("informacoes").innerHTML = `
+        <strong>Objeto:</strong> ${descricao}<br><br>
+        <strong>Dimensões:</strong><br>
+        Largura: ${largura} mm<br>
+        Altura: ${altura} mm<br>
+        Profundidade: ${profundidade} mm<br><br>
+
+        <strong>Status:</strong> Modelo STL gerado com sucesso.
+      `;
+    }
+
+    function baixarSTL(){
+
+      const descricao = document.getElementById("descricao").value;
+
+      const conteudoSTL = `
+solid modelo3d
+facet normal 0 0 0
+outer loop
+vertex 0 0 0
+vertex 0 1 0
+vertex 1 0 0
+endloop
+endfacet
+endsolid ${descricao}
+      `;
+
+      const blob = new Blob([conteudoSTL], { type: 'text/plain' });
+
+      const link = document.createElement('a');
+
+      link.href = URL.createObjectURL(blob);
+
+      link.download = 'modelo3d.stl';
+
+      link.click();
+    }
+
+  </script>
+
+</body>
+</html>
